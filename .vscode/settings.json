@@ -1,0 +1,28 @@
+{
+  "debug.internalConsoleOptions": "openOnSessionStart",
+  "prettier.configPath": "./.prettierrc.cjs",
+  "rust-analyzer.debug.engineSettings": {
+    "lldb": {
+      "internalConsoleOptions": "openOnSessionStart",
+      "terminal": "console"
+    },
+    "cppdbg": {
+      "miDebuggerPath": "${env:HOME}/.cargo/bin/rust-gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": false
+        }
+      ]
+    }
+  },
+  "rust-analyzer.debug.openDebugPane": true,
+  "lldb.launch.expressions": "simple",
+  "lldb.launch.preRunCommands": [
+    "command script import ${workspaceFolder}/.vscode/rust_prettifier_for_lldb.py"
+  ],
+  "rust-analyzer.runnables.extraEnv": {
+    "RUST_LOG": "DEBUG,atm_interview=TRACE"
+  }
+}
