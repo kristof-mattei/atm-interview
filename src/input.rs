@@ -2,6 +2,7 @@ use std::path::Path;
 
 use color_eyre::eyre::{self, Context};
 use csv::{ReaderBuilder, Trim};
+use memory_stats::memory_stats;
 use rust_decimal::Decimal;
 use serde::Deserialize;
 
@@ -36,11 +37,31 @@ pub async fn parse_csv(
     path_to_file: &Path,
     sender: tokio::sync::mpsc::Sender<Transaction>,
 ) -> Result<(), eyre::Error> {
+    let usage = memory_stats().expect("Failed to get memory stats");
+    println!(
+        "Before opening physical memory usage: {} MB",
+        usage.physical_mem / (1024 * 1024)
+    );
+    println!(
+        "Before opening virtual memory usage: {} MB",
+        usage.virtual_mem / (1024 * 1024)
+    );
+
     // try and read the file, using exists to detect existance can return false positive if the file is deleted in between checking and reading
     let mut reader = ReaderBuilder::new()
         .trim(Trim::All)
         .from_path(path_to_file)
         .wrap_err("Unable to read file, does it exist?")?;
+
+    let usage = memory_stats().expect("Failed to get memory stats");
+    println!(
+        "After opening physical memory usage: {} MB",
+        usage.physical_mem / (1024 * 1024)
+    );
+    println!(
+        "After opening virtual memory usage: {} MB",
+        usage.virtual_mem / (1024 * 1024)
+    );
 
     for transaction in reader.deserialize::<RawCsvTransaction>() {
         let transaction = transaction?;
@@ -53,6 +74,16 @@ pub async fn parse_csv(
             )
             .await?;
     }
+
+    let usage = memory_stats().expect("Failed to get memory stats");
+    println!(
+        "After reading through whole file physical memory usage: {} MB",
+        usage.physical_mem / (1024 * 1024)
+    );
+    println!(
+        "After reading through whole file virtual memory usage: {} MB",
+        usage.virtual_mem / (1024 * 1024)
+    );
 
     Ok(())
 }
