@@ -49,7 +49,7 @@ rust_decimal = { version = "1.36.0", features = [
     "serde-with-arbitrary-precision",
 ] }
 serde = { version = "1.0.218", features = ["derive"] }
-tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread", "sync"] }
+tokio = { version = "1.43.1", features = ["macros", "rt-multi-thread", "sync"] }
 tokio-util = { version = "0.7.13", features = ["rt"] }
 
 # OpenSSL for musl
